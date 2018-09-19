@@ -43,8 +43,7 @@ FROM
 TIMESTAMP BY 
    DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
 GROUP BY 
-   deviceId, SESSIONWINDOW(minute, 3, 15) OVER (PARTITION BY deviceId)```
-
+   deviceId, SESSIONWINDOW(minute, 3, 15) OVER (PARTITION BY deviceId)
 ```
 
 
