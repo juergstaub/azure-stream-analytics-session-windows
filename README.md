@@ -2,7 +2,7 @@
 
 Little project to test the new session windows in Azure Stream Analytics: https://msdn.microsoft.com/en-us/azure/stream-analytics/reference/session-window-azure-stream-analytics
 
-##What are we trying to solve
+## What are we trying to solve
 We have devices (mobile phones) which are connected to the GSM network. Currently we use tumbling and hopping windows for chuncking our streams into smaller segments which are used by downstream processing systems. Our device are offloading data which can be up to one week old, this means that we configure for late arrival. The side effect is that when the device does not send data anymore, we are not receiving the last window. It is possible to insert a synthtic even at the cost of loosing some data when the device sends data beefore the synthetic event.
 
 
