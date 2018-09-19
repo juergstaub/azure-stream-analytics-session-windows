@@ -2,7 +2,23 @@
 
 Little project to test the new session windows in Azure Stream Analytics: https://msdn.microsoft.com/en-us/azure/stream-analytics/reference/session-window-azure-stream-analytics
 
-For comparison I have added a query that outputs tumbling windows. Those look correct.
+For comparison I have added a query that outputs tumbling windows, those look correct:
+
+```
+SELECT 
+    deviceId,
+    MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')) AS windowStart,
+    System.Timestamp AS windowEnd,
+    DATEDIFF(second, MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds
+INTO
+   TumblingWindows
+FROM 
+    TestDeviceData 
+TIMESTAMP BY 
+    DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
+GROUP BY 
+   deviceId, TUMBLINGWINDOW(minute,15)
+```
 
 |DeviceId                            |Start                        |End                          |Duration(sec)
 |------------------------------------|-----------------------------|-----------------------------|-------------|
@@ -13,6 +29,24 @@ For comparison I have added a query that outputs tumbling windows. Those look co
 
 
 I defined a maxDuration for the session windows and this does not seem to be respected.
+
+```
+SELECT 
+    deviceId,
+    MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')) AS windowStart,
+    System.Timestamp AS windowEnd,
+    DATEDIFF(second, MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds
+INTO
+   SessionWindows
+FROM 
+   TestDeviceData 
+TIMESTAMP BY 
+   DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
+GROUP BY 
+   deviceId, SESSIONWINDOW(minute, 3, 15) OVER (PARTITION BY deviceId)```
+
+```
+
 
 |DeviceId                            |Start                        |End                          |Duration(sec)
 |------------------------------------|-----------------------------|-----------------------------|-------------|
