@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2016
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{E6C563F2-BDC2-4A24-ACBF-01715157DCBB}") = "DeviceDataSessionWindows", "DeviceDataSessionWindows\DeviceDataSessionWindows.asaproj", "{BF9F2F5E-EE4B-4D4E-B1E2-010832E6073A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BF9F2F5E-EE4B-4D4E-B1E2-010832E6073A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF9F2F5E-EE4B-4D4E-B1E2-010832E6073A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF9F2F5E-EE4B-4D4E-B1E2-010832E6073A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF9F2F5E-EE4B-4D4E-B1E2-010832E6073A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4C6F71FA-AF77-4801-80F1-0ECA64132B19}
+	EndGlobalSection
+EndGlobal
