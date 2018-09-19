@@ -5,7 +5,7 @@ Little project to test the new session windows in Azure Stream Analytics: https:
 ## What are we trying to solve
 We have devices (mobile phones) which are using the GSM network to ingest telemetry data via the IoT Hub to our backend. We use tumbling and hopping windows for chuncking our streams into smaller segments which are then processe by downstream processing systems. Our devices are offloading data which can be up to one week old,because of that, we configure for late arrival. The side effect is that when the device does not send data anymore, we are not receiving the last window. It is possible to insert a synthetic event at the cost of loosing some data when the device offloads data with a timestamp before the synthetic event timestamp.
 
-Receiving the last window is important because it is usually the end of a car trip and the users do not want to miss this one. Also because some mathematical operation we execute, it is better to have longer time windows (as much as fits into 256KB, becuase of EventHub limitations), this makes the problem even worse.
+Receiving the last window is important because it is usually the end of a car trip and the users do not want to miss this one. Also because some mathematical operations we execute, it is better to have longer time windows (as much as fits into 256KB, becuase of EventHub limitations), this makes the problem even worse.
 
 We were hoping that the session window would help us for our case.
 
