@@ -61,4 +61,4 @@ GROUP BY
 |1eb38af5-d031-4f06-807f-73ddef6da513|2018-04-12T17:32:30.0560000Z |2018-04-12T17:40:41.0230000Z |491          |
 
 
-What we don't understand is why the 2nd session has a duration of 1858 second, here I would expect 900 seconds or 1800 max as the query seems to be exexuted in fixed interval and we might just miss one?
+What we don't understand is why the 2nd session has a duration of 1858 seconds, I would expect 900 seconds or 1800 max as the query seems to be exexuted in fixed interval and we might just miss one?
