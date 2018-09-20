@@ -3,7 +3,7 @@
   "OutputErrorPolicy": "Drop",
   "EventsLateArrivalMaxDelayInSeconds": 5,
   "EventsOutOfOrderMaxDelayInSeconds": 0,
-  "EventsOutOfOrderPolicy": "Drop",
+  "EventsOutOfOrderPolicy": "Adjust",
   "StreamingUnits": 1,
   "CompatibilityLevel": "1.0",
   "AccountName": null,

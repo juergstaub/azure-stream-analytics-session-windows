@@ -4,61 +4,63 @@
 WITH DeviceData AS 
 (
     SELECT 
-        deviceId,
-        DATEADD(millisecond, [startTime], '1970-01-01T00:00:00Z') as [start],
-        DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z') as [end],
-        LAG(endTime) OVER (PARTITION BY event.deviceId LIMIT DURATION(minute,60)) as previousEnd
+        deviceData.deviceId as deviceId,
+        DATEADD(millisecond, deviceData.startTime, '1970-01-01T00:00:00Z') as [start],
+        DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z') as [end],
+        LAG(deviceData.endTime) OVER (PARTITION BY deviceData.deviceId LIMIT DURATION(minute,60)) as previousEnd,
+        GETARRAYLENGTH(deviceData.gps) as gpsCount
     FROM
-        TestDeviceData  
+        TestDeviceData as deviceData
     TIMESTAMP BY 
-        DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
+        DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')
 )
 
 SELECT 
     deviceId,
     [start],
     [end],
-    DATEDIFF(second, DATEADD(millisecond, [previousEnd], '1970-01-01T00:00:00Z'),[start]) AS previousEndMinusStartSeconds
+    DATEDIFF(second, DATEADD(millisecond, [previousEnd], '1970-01-01T00:00:00Z'),[start]) AS previousEndMinusStartSeconds,
+    gpsCount
 into
     Output
 FROM
     DeviceData
 
+
 ---
 --- Uses the tumbling windows and produces an output I understand....
 ---
 SELECT 
-    deviceId,
-    MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')) AS windowStart,
+    deviceData.deviceId,
+    MIN(DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')) AS windowStart,
     System.Timestamp AS windowEnd,
-    DATEDIFF(second, MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds
+    DATEDIFF(second, MIN(DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds,
+    SUM(GETARRAYLENGTH(deviceData.gps)) as gpsCount
 INTO
    TumblingWindows
 FROM 
-    TestDeviceData 
+    TestDeviceData AS deviceData
 TIMESTAMP BY 
-    DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
+    DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')
 GROUP BY 
-   deviceId, TUMBLINGWINDOW(minute,15)
-
+   deviceData.deviceId, gpsCount, TUMBLINGWINDOW(minute,15)
 
 ---
 --- Uses the new session windows and produces an output I don't understand
 ---
 SELECT 
-    deviceId,
-    MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')) AS windowStart,
+    deviceData.deviceId,
+    MIN(DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')) AS windowStart,
     System.Timestamp AS windowEnd,
-    DATEDIFF(second, MIN(DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds
+    DATEDIFF(second, MIN(DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')), System.Timestamp) AS durationSeconds,
+    SUM(GETARRAYLENGTH(deviceData.gps)) as gpsCount
 INTO
    SessionWindows
 FROM 
-   TestDeviceData 
+    TestDeviceData AS deviceData
 TIMESTAMP BY 
-   DATEADD(millisecond, [endTime], '1970-01-01T00:00:00Z')
+    DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')
 GROUP BY 
-   deviceId, SESSIONWINDOW(minute, 3, 15) OVER (PARTITION BY deviceId)
-
-
+   deviceData.deviceId, gpsCount, SESSIONWINDOW(Timeout(second,180),MaxDuration(minute, 15))
 
 
