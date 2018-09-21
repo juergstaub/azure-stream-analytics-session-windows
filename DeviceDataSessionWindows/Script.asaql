@@ -7,6 +7,7 @@ WITH DeviceData AS
         deviceData.deviceId as deviceId,
         DATEADD(millisecond, deviceData.startTime, '1970-01-01T00:00:00Z') as [start],
         DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z') as [end],
+        DATEDIFF(second, DATEADD(millisecond, deviceData.startTime, '1970-01-01T00:00:00Z'), DATEADD(millisecond, deviceData.endTime, '1970-01-01T00:00:00Z')) AS durationSeconds,
         LAG(deviceData.endTime) OVER (PARTITION BY deviceData.deviceId LIMIT DURATION(minute,60)) as previousEnd,
         GETARRAYLENGTH(deviceData.gps) as gpsCount
     FROM
@@ -19,7 +20,8 @@ SELECT
     deviceId,
     [start],
     [end],
-    DATEDIFF(second, DATEADD(millisecond, [previousEnd], '1970-01-01T00:00:00Z'),[start]) AS previousEndMinusStartSeconds,
+    DATEDIFF(second, DATEADD(millisecond, [previousEnd], '1970-01-01T00:00:00Z'),[start]) AS gapSeconds,
+    durationSeconds,
     gpsCount
 into
     Output
