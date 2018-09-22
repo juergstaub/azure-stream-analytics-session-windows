@@ -27,6 +27,8 @@ GROUP BY
    deviceId, TUMBLINGWINDOW(minute,15)
 ```
 
+The datafile used is the TestDeviceData.json in the root dirctory.
+
 |DeviceId                            |Start                        |End                          |Duration(sec)
 |------------------------------------|-----------------------------|-----------------------------|-------------|
 |1eb38af5-d031-4f06-807f-73ddef6da513|2018-04-12T16:45:04.7530000Z |2018-04-12T17:00:00.0000000Z |896          |
@@ -61,4 +63,11 @@ GROUP BY
 |1eb38af5-d031-4f06-807f-73ddef6da513|2018-04-12T17:32:30.0560000Z |2018-04-12T17:40:41.0230000Z |491          |
 
 
-What we don't understand is why the 2nd session has a duration of 1858 seconds, I would expect 900 seconds or 1800 max as the query seems to be exexuted in fixed interval and we might just miss one?
+What we don't understand is why the 2nd session has a duration of 1858 seconds, I would expect 900 seconds or 1800 max as the query seems to be executed in fixed intervals, in our case this would be 0, 15, 30, 45, 60, ...
+
+Questions are:
+- Is my assumption correct that the maximum window duration should be 2 * maxDuration?
+- Are there any plans to execute the query in smaller intervals then maxDuration.
+- What is the behavior with late arrival, will we always get the timeout of the last window?
+- Any plans to have overlapping session windows (hopping windows with timeouts)?
+
