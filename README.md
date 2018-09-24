@@ -74,4 +74,4 @@ Questions are:
 
 Update:
 
-I have deployed now our query to Azure and see that the query is executed at maxDuration intervals, but not respecting the time of the payload. This would make it fairly useless for our scenario. 
+I have deployed now our query to Azure and see a behavior I cannot explain. The query does not seem to get executed in the maxInterval and I do nt get any output at all.
