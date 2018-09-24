@@ -71,3 +71,7 @@ Questions are:
 - What is the behavior with late arrival, will we always get the timeout of the last window?
 - Any plans to have overlapping session windows (hopping windows with timeouts)?
 
+
+Update:
+
+I have deployed now our query to Azure and see that the query is executed at maxDuration intervals, but not respecting the time of the payload. This would make it fairly useless for our scenario. 
