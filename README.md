@@ -68,10 +68,46 @@ What we don't understand is why the 2nd session has a duration of 1858 seconds, 
 Questions are:
 - Is my assumption correct that the maximum window duration should be 2 * maxDuration?
 - Are there any plans to execute the query in smaller intervals then maxDuration.
+- Is the query respecting the TIMESTAMP BY, for example if there is a batch of data, is the query interval scheduled according the the timestamps in the payload or still current time
 - What is the behavior with late arrival, will we always get the timeout of the last window?
 - Any plans to have overlapping session windows (hopping windows with timeouts)?
 
 
 Update:
 
-I have deployed now our query to Azure and see a behavior I cannot explain. The query does not seem to get executed in the maxInterval and I do nt get any output at all.
+I have deployed our query to Azure and see a behavior I cannot explain. The query does not seem to get executed in the maxInterval and I do not get any output at all. Our job is configured for late arrival.
+
+I modified the query to support partions as follows:
+
+```
+SELECT 
+    Id,
+    Dtp AS DeviceType,
+    Vid AS VehicleId,
+    PartitionId,
+    System.Timestamp AS WindowEndTime,
+    COLLECT() AS GpsData
+INTO
+    GpsSessionWindow
+FROM 
+    DeviceGpsData
+TIMESTAMP BY 
+    DATEADD(millisecond, [ts], '1970-01-01T00:00:00Z')
+PARTITION BY PartitionId
+GROUP BY 
+    Id, Dtp, Vid, PartitionId, SESSIONWINDOW(Timeout(second,90),MaxDuration(minute, 2)) OVER (PARTITION BY PartitionId)
+```
+
+And then I spotted the following in the diagnostics logs:
+ 
+```
+"properties": {
+        "Message Time": "9/24/2018 4:42:14 PM UTC",
+        "Message": "Input Partition [0] does not have additional data for more than [14] minute(s). Partition will not progress until either events arrive or late arrival threshold is met.",
+        "Type": "InputPartitionNotProgressing",
+        "Correlation ID": "ba27ab7a-c171-40a4-b81b-e57e0a8741b8"
+    },
+```
+
+
+
